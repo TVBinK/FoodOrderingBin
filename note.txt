@@ -1,0 +1,13 @@
+web convert SHA1 to hash key: https://tomeko.net/online_tools/hex_to_base64.php
+
+git init
+git add .
+git commit -m "First"
+git remote add origin https://github.com/TVBinK/FoodOrdering.git
+git push origin master
+
+// Thay đổi
+git status // kiểm tra xem file nào bị modified
+git add .
+git commit -m "second"
+git push origin master

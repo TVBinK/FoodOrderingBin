@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Food Ordering</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_web_client_id" translatable="false">788639659495-tps43tcr9ucrl9lcge7gkre33ctjnhcp.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1603458106889742</string>
+    <string name="fb_login_protocol_scheme">fb1603458106889742</string>
+    <string name="facebook_client_token">3f5dcc87159a1a48e58b7b888a5199b4</string>
+
+</resources>
