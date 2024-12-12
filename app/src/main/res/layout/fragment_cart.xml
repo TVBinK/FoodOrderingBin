@@ -57,7 +57,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnProceed"
+            android:id="@+id/btnPlaceMyOrder"
             android:layout_width="306dp"
             android:layout_height="53dp"
             android:layout_marginBottom="20dp"

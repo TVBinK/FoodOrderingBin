@@ -47,7 +47,7 @@ class CartFragment : Fragment() {
 
         retrieveCartItems()
 
-        binding.btnProceed.setOnClickListener {
+        binding.btnPlaceMyOrder.setOnClickListener {
             getOrderItemDetail() // Corrected method name
         }
 
