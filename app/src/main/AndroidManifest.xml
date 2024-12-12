@@ -27,12 +27,6 @@
             android:name=".EditProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Adapter.SearchActivity"
-            android:exported="false" />
-        <activity
             android:name=".SignActivity"
             android:exported="false" />
         <activity

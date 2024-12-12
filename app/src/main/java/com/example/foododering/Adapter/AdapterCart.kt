@@ -1,5 +1,6 @@
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -29,7 +30,7 @@ class AdapterCart(
     init {
         val databaseReference = FirebaseDatabase.getInstance()
         val userId = auth.currentUser?.uid
-        itemQuantities = IntArray(cartItems.size) {1}
+        itemQuantities = IntArray(cartItems.size) { 1 }
         cartItemsReference =
             databaseReference.reference.child("users").child(userId ?: "").child("CartItems")
     }
@@ -61,11 +62,11 @@ class AdapterCart(
                 Glide.with(context).load(uri).into(imgViewItem)
 
                 btnMinus.setOnClickListener {
-                    decreaseQuantity(position,binding)
+                    decreaseQuantity(position, binding)
                 }
 
                 btnPlus.setOnClickListener {
-                    increaseQuantity(position,binding)
+                    increaseQuantity(position, binding)
                 }
 
                 btnDelete.setOnClickListener {
@@ -96,45 +97,68 @@ class AdapterCart(
     }
 
     fun deleteItem(position: Int) {
-        getUniqueKeyAtPosition(position) { uniqueKey ->
-            uniqueKey?.let {
-                removeItem(position, it)
-            } ?: run {
-                Toast.makeText(context, "Không thể xác định sản phẩm", Toast.LENGTH_SHORT).show()
+        // Kiểm tra nếu vị trí hợp lệ trong danh sách
+        if (position in cartItems.indices) {
+            // Nếu chỉ còn 0 sản phẩm trong giỏ hàng
+            if (cartItems.size == 0) {
+                // Xóa luôn sản phẩm ở vị trí 0
+                getUniqueKeyAtPosition(position) { uniqueKey ->
+                    if (uniqueKey != null) {
+                        removeItem(position, uniqueKey)
+                    } else {
+                        Toast.makeText(context, "Không thể xác định sản phẩm", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                // Nếu còn nhiều hơn 0 sản phẩm, chỉ giảm số lượng
+                getUniqueKeyAtPosition(position) { uniqueKey ->
+                    if (uniqueKey != null) {
+                        removeItem(position, uniqueKey)
+                    } else {
+                        Toast.makeText(context, "Không thể xác định sản phẩm", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
+        } else {
+            // Nếu vị trí không hợp lệ
+            Toast.makeText(context, "Vị trí không hợp lệ: $position", Toast.LENGTH_SHORT).show()
+            Log.e("AdapterCart", "Invalid position: $position, size: ${cartItems.size}")
         }
     }
 
+
     private fun removeItem(position: Int, uniqueKey: String) {
         cartItemsReference.child(uniqueKey).removeValue().addOnSuccessListener {
-            // Xóa item khỏi các danh sách local
-            cartItems.removeAt(position)
-            cartItemimages.removeAt(position)
-            cartItemprices.removeAt(position)
-            cartQuantity.removeAt(position)
-            cartDescriptions.removeAt(position)
+            if (position in cartItems.indices) {
+                // Xóa mục khỏi danh sách
+                cartItems.removeAt(position)
+                cartItemimages.removeAt(position)
+                cartItemprices.removeAt(position)
+                cartQuantity.removeAt(position)
+                cartDescriptions.removeAt(position)
 
-            // Cập nhật lại mảng số lượng
-            itemQuantities = itemQuantities.filterIndexed { index, _ ->
-                index != position
-            }.toIntArray()
+                // Cập nhật lại mảng số lượng
+                itemQuantities = itemQuantities.filterIndexed { index, _ ->
+                    index != position
+                }.toIntArray()
 
-            // Thông báo adapter về sự thay đổi
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, cartItems.size)
+                // Sử dụng notifyDataSetChanged để tránh lỗi trạng thái không đồng nhất
+                notifyDataSetChanged()
+            } else {
+                Log.e("AdapterCart", "Invalid position after Firebase update: $position")
+            }
         }.addOnFailureListener {
             Toast.makeText(context, "Xóa sản phẩm thất bại", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
     private fun increaseQuantity(position: Int, binding: PopularItemCartBinding) {
         if (position < cartQuantity.size) {
-            // Tăng số lượng trong mảng `cartQuantity`
             cartQuantity[position]++
-
-            // Hiển thị số lượng cập nhật ngay trên giao diện
             binding.tvQuantity.text = cartQuantity[position].toString()
 
-            // Cập nhật số lượng lên Firebase
             val userId = auth.currentUser?.uid
             if (userId != null) {
                 val foodName = cartItems[position]
@@ -157,13 +181,9 @@ class AdapterCart(
 
     private fun decreaseQuantity(position: Int, binding: PopularItemCartBinding) {
         if (position < cartQuantity.size && cartQuantity[position] > 1) {
-            // Giảm số lượng trong mảng `cartQuantity`
             cartQuantity[position]--
-
-            // Hiển thị số lượng cập nhật ngay trên giao diện
             binding.tvQuantity.text = cartQuantity[position].toString()
 
-            // Cập nhật số lượng lên Firebase
             val userId = auth.currentUser?.uid
             if (userId != null) {
                 val foodName = cartItems[position]
@@ -181,17 +201,12 @@ class AdapterCart(
                         Toast.makeText(context, "Cập nhật số lượng thất bại", Toast.LENGTH_SHORT).show()
                     }
             }
-        } else if (cartQuantity[position] <= 1) {
-            // Nếu số lượng <= 1 thì xóa item
+        } else if (position < cartQuantity.size && cartQuantity[position] <= 1) {
             deleteItem(position)
         }
     }
 
-//update quantities
-    fun getItemQuantities():MutableList<Int> {
-        val itemQuantity = mutableListOf<Int>()
-        itemQuantity.addAll(cartQuantity)
-        return itemQuantity
+    fun getItemQuantities(): MutableList<Int> {
+        return cartQuantity.toMutableList()
     }
-
 }
