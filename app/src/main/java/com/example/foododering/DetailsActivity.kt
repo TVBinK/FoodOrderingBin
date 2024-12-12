@@ -35,7 +35,6 @@ class DetailsActivity : AppCompatActivity() {
         //lay du lieu tu intent
         foodName = intent.getStringExtra("foodName")
         foodPrice = intent.getStringExtra("foodPrice")
-        Log.d("priceFOod", "foodPrice: $foodPrice")
         foodImage = intent.getStringExtra("foodImage")
         foodDescription = intent.getStringExtra("foodDescription")
         with(binding) {

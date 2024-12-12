@@ -1,5 +1,6 @@
 package com.example.foododering
 
+import android.content.ClipDescription
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -21,6 +22,7 @@ class PayoutActivity : AppCompatActivity() {
     private lateinit var foodItemPrice: ArrayList<String>
     private lateinit var foodItemImage: ArrayList<String>
     private lateinit var foodItemQuantities: ArrayList<Int>
+    private lateinit var foodDescription: ArrayList<String>
     private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +52,14 @@ class PayoutActivity : AppCompatActivity() {
             name = binding.editTextName.text.toString().trim()
             address = binding.editTextAddress.text.toString().trim()
             phone = binding.editTextPhone.text.toString().trim()
+            // Assuming you have passed food items through the intent or fetched them
+            foodItemName = intent.getStringArrayListExtra("FoodItemName") ?: ArrayList()
+            foodItemPrice = intent.getStringArrayListExtra("FoodItemPrice") ?: ArrayList()
+            foodItemImage = intent.getStringArrayListExtra("FoodItemImage") ?: ArrayList()
+            foodItemQuantities = intent.getIntegerArrayListExtra("FoodItemQuantities") ?: ArrayList()
+            foodDescription = intent.getStringArrayListExtra("FoodItemDescription") ?: ArrayList()
+
+            // Kiểm tra xem các trường dữ liệu đã được cung cấp hay không
             if (name.isBlank() && address.isBlank() && phone.isBlank()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
             } else {
@@ -62,23 +72,24 @@ class PayoutActivity : AppCompatActivity() {
         userId = auth.currentUser?.uid ?: ""
         val time = System.currentTimeMillis()
         val itemPlusKey =
-            databaseReference.child("users").child(userId).child("OrderDertails").push().key
+            databaseReference.child("users").child(userId).child("OrderDetails").push().key
         val oderDetails = OrderDetails(
             userId,
             name,
             foodItemName,
-            foodItemPrice,
             foodItemImage,
+            foodItemPrice,
             foodItemQuantities,
+            foodDescription,
             address,
-            phone,
             totalAmount,
+            phone,
             false ,
             false,
             itemPlusKey,
             time
         )
-        val oderReference = databaseReference.child("OrderDertails").child(itemPlusKey!!)
+        val oderReference = databaseReference.child("users").child(userId).child("OrderDetails").child(itemPlusKey!!)
         oderReference.setValue(oderDetails).addOnSuccessListener {
             Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show()
             //intent đến activity thank

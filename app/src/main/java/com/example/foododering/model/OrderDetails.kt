@@ -2,26 +2,32 @@ package com.example.foododering.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import kotlin.collections.ArrayList
 
-class OrderDetails() : Parcelable {
-    var userUid: String? = null
-    var userName: String? = null
-    var foodNames: MutableList<String>? = null
-    var foodImages: MutableList<String>? = null
-    var foodPrices: MutableList<String>? = null
-    var foodQuantities: MutableList<Int>? = null
-    var address: String? = null
-    var totalPrice: String? = null
-    var phoneNumber: String? = null
-    var orderAccepted: Boolean = false
-    var paymentReceived: Boolean = false
-    var itemPushKey: String? = null
+data class OrderDetails(
+    var userUid: String? = null,
+    var userName: String? = null,
+    var foodNames: List<String>? = null,
+    var foodImages: List<String>? = null,
+    var foodPrices: List<String>? = null,
+    var foodQuantities: List<Int>? = null,
+    var foodDescription: List<String>? = null,
+    var address: String? = null,
+    var totalPrice: String? = null,
+    var phoneNumber: String? = null,
+    var orderAccepted: Boolean = false,
+    var paymentReceived: Boolean = false,
+    var itemPushKey: String? = null,
     var currentTime: Long = 0
+) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         userUid = parcel.readString()
         userName = parcel.readString()
+        foodNames = parcel.createStringArrayList()
+        foodImages = parcel.createStringArrayList()
+        foodPrices = parcel.createStringArrayList()
+        foodQuantities = parcel.createIntArray()?.toList()
+        foodDescription = parcel.createStringArrayList()
         address = parcel.readString()
         totalPrice = parcel.readString()
         phoneNumber = parcel.readString()
@@ -31,38 +37,12 @@ class OrderDetails() : Parcelable {
         currentTime = parcel.readLong()
     }
 
-    constructor(
-        userId: String,
-        name: String,
-        foodItemName: java.util.ArrayList<String>,
-        foodItemPrice: java.util.ArrayList<String>,
-        foodItemImage: java.util.ArrayList<String>,
-        foodItemQuantities: java.util.ArrayList<Int>,
-        address: String,
-        phone: String,
-        totalAmount: String,
-        b: Boolean,
-        b1: Boolean,
-        itemPlusKey: String?,
-        time: Long
-    ) : this(){
-        this.userUid = userId
-        this.userName = name
-        this.foodNames = foodItemName
-        this.foodPrices = foodItemPrice
-        this.foodImages = foodItemImage
-        this.foodQuantities = foodItemQuantities
-        this.address = address
-        this.totalPrice = totalAmount
-        this.phoneNumber = phone
-        this.orderAccepted = b
-        this.paymentReceived = b1
-        this.itemPushKey = itemPlusKey
-        this.currentTime = time
-    }
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(userUid)
         parcel.writeString(userName)
+        parcel.writeStringList(foodNames)
+        parcel.writeStringList(foodImages)
+        parcel.writeStringList(foodPrices)
         parcel.writeString(address)
         parcel.writeString(totalPrice)
         parcel.writeString(phoneNumber)
@@ -85,5 +65,6 @@ class OrderDetails() : Parcelable {
             return arrayOfNulls(size)
         }
     }
+
 
 }
