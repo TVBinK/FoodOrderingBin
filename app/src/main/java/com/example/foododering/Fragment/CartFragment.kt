@@ -53,7 +53,6 @@ class CartFragment : Fragment() {
 
         return binding.root
     }
-
     private fun retrieveCartItems() {
         val foodReference: DatabaseReference =
             database.reference.child("users").child(userId).child("CartItems")
@@ -92,6 +91,15 @@ class CartFragment : Fragment() {
                 binding.tvCharge.text = deliveryCharge
                 totalAmount = (subTotalValue + 1).toString() + "$"
                 binding.tvTotal.text = totalAmount
+
+                // Kiểm tra giỏ hàng có trống không và cập nhật giao diện
+                if (foodNames.isEmpty()) {
+                    binding.tvEmptyCart.visibility = View.VISIBLE
+                    binding.imgCartTotal.visibility = View.GONE
+                } else {
+                    binding.tvEmptyCart.visibility = View.GONE
+                    binding.imgCartTotal.visibility = View.VISIBLE
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -99,7 +107,6 @@ class CartFragment : Fragment() {
             }
         })
     }
-
 
     private fun setupAdapter() {
         context?.let { ctx ->

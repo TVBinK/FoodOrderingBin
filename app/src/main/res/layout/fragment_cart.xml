@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"
-            android:fontFamily="@font/yeon_sung"
+            android:fontFamily="@font/abel"
             android:text="Cart"
             android:textColor="#6B50F6"
             android:textSize="25sp"
@@ -45,7 +45,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView13"
+            android:id="@+id/img_CartTotal"
             android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="72dp"
@@ -63,9 +63,9 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/whitebutton"
             android:text="Place My Order"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView13"
-            app:layout_constraintEnd_toEndOf="@+id/imageView13"
-            app:layout_constraintStart_toStartOf="@+id/imageView13" />
+            app:layout_constraintBottom_toBottomOf="@+id/img_CartTotal"
+            app:layout_constraintEnd_toEndOf="@+id/img_CartTotal"
+            app:layout_constraintStart_toStartOf="@+id/img_CartTotal" />
 
         <TextView
             android:id="@+id/textView11"
@@ -76,8 +76,8 @@
             android:fontFamily="monospace"
             android:text="Sub-Total: "
             android:textColor="@color/white"
-            app:layout_constraintStart_toStartOf="@+id/imageView13"
-            app:layout_constraintTop_toTopOf="@+id/imageView13" />
+            app:layout_constraintStart_toStartOf="@+id/img_CartTotal"
+            app:layout_constraintTop_toTopOf="@+id/img_CartTotal" />
 
         <TextView
             android:id="@+id/textView13"
@@ -88,7 +88,7 @@
             android:fontFamily="monospace"
             android:text="Delivery Charge: "
             android:textColor="@color/white"
-            app:layout_constraintStart_toStartOf="@+id/imageView13"
+            app:layout_constraintStart_toStartOf="@+id/img_CartTotal"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <TextView
@@ -101,7 +101,7 @@
             android:text="Total: "
             android:textColor="@color/white"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/imageView13"
+            app:layout_constraintStart_toStartOf="@+id/img_CartTotal"
             app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
         <TextView
@@ -115,7 +115,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/textView11"
-            app:layout_constraintTop_toTopOf="@+id/imageView13" />
+            app:layout_constraintTop_toTopOf="@+id/img_CartTotal" />
 
         <TextView
             android:id="@+id/tvCharge"
@@ -147,12 +147,14 @@
             android:id="@+id/textView22"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="124dp"
-            android:fontFamily="sans-serif-condensed"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="128dp"
+            android:fontFamily="@font/abel"
             android:text="Order details"
+            android:textColor="@color/black"
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.074"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -160,14 +162,14 @@
             android:id="@+id/tvEmptyCart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="112dp"
+            android:layout_marginTop="140dp"
             android:text="Cart is Empty!!"
             android:textColor="#E21616"
-            android:textStyle="bold"
             android:textSize="20sp"
+            android:textStyle="bold"
             android:visibility="invisible"
+            android:fontFamily="@font/abel"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
