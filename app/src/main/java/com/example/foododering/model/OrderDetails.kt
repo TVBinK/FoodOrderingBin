@@ -13,7 +13,7 @@ data class OrderDetails(
     var address: String? = null,
     var totalPrice: String? = null,
     var phoneNumber: String? = null,
-    var orderAccepted: Boolean = false,
+    var orderAccepted: String? = "Watting",
     var paymentReceived: Boolean = false,
     var itemPushKey: String? = null,
     var currentTime: Long = 0,
@@ -30,7 +30,7 @@ data class OrderDetails(
         address = parcel.readString(),
         totalPrice = parcel.readString(),
         phoneNumber = parcel.readString(),
-        orderAccepted = parcel.readByte() != 0.toByte(),
+        orderAccepted = parcel.readString(),
         paymentReceived = parcel.readByte() != 0.toByte(),
         itemPushKey = parcel.readString(),
         currentTime = parcel.readLong(),
@@ -48,7 +48,7 @@ data class OrderDetails(
         parcel.writeString(address)
         parcel.writeString(totalPrice)
         parcel.writeString(phoneNumber)
-        parcel.writeByte(if (orderAccepted) 1 else 0)
+        parcel.writeString(orderAccepted)
         parcel.writeByte(if (paymentReceived) 1 else 0)
         parcel.writeString(itemPushKey)
         parcel.writeLong(currentTime)

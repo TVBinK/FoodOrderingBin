@@ -107,7 +107,7 @@ class PayoutActivity : AppCompatActivity() {
             address = address,
             totalPrice = totalAmount,
             phoneNumber = phone,
-            orderAccepted = false,
+            orderAccepted = "Waiting",
             paymentReceived = false,
             itemPushKey = itemPushKey,
             currentTime = time,

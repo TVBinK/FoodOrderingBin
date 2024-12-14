@@ -154,12 +154,12 @@
                     app:layout_constraintVertical_bias="1.0" />
 
                 <ImageView
-                    android:id="@+id/imageView24"
+                    android:id="@+id/imgStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:layout_marginEnd="24dp"
-                    android:src="@drawable/img_not_received"
+                    android:src="@drawable/img_waitting_accept"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
