@@ -69,8 +69,9 @@ class HomeFragment : Fragment() {
 
     private fun setupImageSlider() {
         val imageList = ArrayList<SlideModel>()
-        imageList.add(SlideModel(R.drawable.banner1, scaleType = ScaleTypes.FIT))
+
         imageList.add(SlideModel(R.drawable.banner2, scaleType = ScaleTypes.FIT))
+        imageList.add(SlideModel(R.drawable.banner1, scaleType = ScaleTypes.FIT))
         imageList.add(SlideModel(R.drawable.banner3, scaleType = ScaleTypes.FIT))
 
         val imageSlider = binding.imageSlider

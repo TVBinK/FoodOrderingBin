@@ -11,3 +11,6 @@ git status // kiểm tra xem file nào bị modified
 git add .
 git commit -m "second"
 git push origin master
+
+//site convert SHa1 sang hashKey
+https://tomeko.net/online_tools/hex_to_base64.php

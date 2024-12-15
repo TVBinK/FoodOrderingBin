@@ -1,11 +1,13 @@
 package com.example.foododering
 
 import OrderDetails
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foododering.Adapter.ShowListOrderAdapter
 import com.example.foododering.databinding.ActivityShowListOrderBinding
+
 
 class ShowListOrderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShowListOrderBinding
@@ -24,6 +26,11 @@ class ShowListOrderActivity : AppCompatActivity() {
         // Thiết lập nút quay lại
         binding.btnBack.setOnClickListener {
             finish()
+        }
+        //btn view map
+        binding.btnViewMap.setOnClickListener {
+            //itent to map activity
+            startActivity(Intent(this, MapActivity::class.java))
         }
 
         // Nhận danh sách đơn hàng từ Intent

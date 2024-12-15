@@ -108,10 +108,14 @@ class HistoryFragment : Fragment() {
                 val image: String = it.foodImages?.firstOrNull() ?: ""
                 val uri = Uri.parse(image)
                 Glide.with(requireContext()).load(uri).into(imgViewItem)
-                if(it.orderAccepted == "Accepted"){
+                if(it.orderAccepted == "Accepted") {
                     imgStatus.setImageResource(com.example.foododering.R.drawable.img_accepted)
-                }else if(it.orderAccepted == "Rejected"){
+                }
+                if(it.orderAccepted == "Rejected"){
                     imgStatus.setImageResource(com.example.foododering.R.drawable.img_rejected)
+                }
+                if(it.orderAccepted == "Completed"){
+                    imgStatus.setImageResource(com.example.foododering.R.drawable.img_completed)
                 }
             }
         }

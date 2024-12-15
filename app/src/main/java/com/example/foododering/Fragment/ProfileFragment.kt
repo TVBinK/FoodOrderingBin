@@ -22,19 +22,38 @@ import com.google.firebase.database.database
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private lateinit var auth: FirebaseAuth
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //khởi tạo firebase
+        // Khởi tạo FirebaseAuth
         auth = FirebaseAuth.getInstance()
-        //Đăng xuất
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            // Lấy email từ Firebase Authentication
+            binding.tvEmail.text = currentUser.email
+
+            // Lấy tên người dùng từ Firebase Realtime Database
+            val database = Firebase.database.reference
+            val userId = currentUser.uid
+            database.child("users").child(userId).get().addOnSuccessListener { snapshot ->
+                val name = snapshot.child("name").value.toString()
+                binding.tvName.text = name
+            }.addOnFailureListener {
+                binding.tvName.text = "Không thể tải tên"
+            }
+        }
+
+
+        // Đăng xuất
         binding.btnLogout.setOnClickListener {
             // Sign out the user from Firebase Authentication
             auth.signOut()
@@ -44,17 +63,11 @@ class ProfileFragment : Fragment() {
             // Finish the current activity
             requireActivity().finish()
         }
-        //change information
+
+        // Chỉnh sửa thông tin
         binding.btnCI.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
             startActivity(intent)
         }
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-
 }

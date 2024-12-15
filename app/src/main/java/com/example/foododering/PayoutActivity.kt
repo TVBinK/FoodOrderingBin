@@ -1,14 +1,17 @@
 package com.example.foododering
 
 import OrderDetails
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.example.foododering.databinding.ActivityPayoutBinding
-
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.android.gms.location.*
 
 class PayoutActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -28,6 +31,10 @@ class PayoutActivity : AppCompatActivity() {
     private lateinit var foodItemQuantities: List<Int>
     private lateinit var foodDescription: List<String>
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPayoutBinding.inflate(layoutInflater)
@@ -37,6 +44,10 @@ class PayoutActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().reference
         userId = auth.currentUser?.uid.orEmpty()
+
+        // Initialize Location Services
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        getCurrentLocation()
 
         // Initialize user data
         setUserData()
@@ -71,6 +82,32 @@ class PayoutActivity : AppCompatActivity() {
             false
         } else {
             true
+        }
+    }
+
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                latitude = location.latitude
+                longitude = location.longitude
+            } else {
+                Toast.makeText(this, "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Lỗi khi lấy vị trí: ${it.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -111,7 +148,9 @@ class PayoutActivity : AppCompatActivity() {
             paymentReceived = false,
             itemPushKey = itemPushKey,
             currentTime = time,
-            orderNumber = orderNumber
+            orderNumber = orderNumber,
+            latitude = latitude,      // Thêm vĩ độ
+            longitude = longitude     // Thêm kinh độ
         )
 
         val userOrderReference = databaseReference.child("users").child(userId).child("OrderDetails").child(itemPushKey!!)
@@ -173,5 +212,9 @@ class PayoutActivity : AppCompatActivity() {
                 Toast.makeText(this@PayoutActivity, "Lỗi khi tải dữ liệu người dùng: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
 }

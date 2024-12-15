@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.foododering"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.foododering"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -56,4 +56,8 @@ dependencies {
     implementation("com.facebook.android:facebook-android-sdk:latest.release")
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.10")
+    implementation("com.google.firebase:firebase-database:20.2.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.android.volley:volley:1.2.1")
 }

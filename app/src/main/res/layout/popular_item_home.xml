@@ -62,7 +62,7 @@
                 android:layout_marginStart="212dp"
                 android:fontFamily="@font/abel"
                 android:text="10"
-                android:textColor="#101010"
+                android:textColor="#6B50F6"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

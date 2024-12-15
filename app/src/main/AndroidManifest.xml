@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
@@ -16,16 +18,13 @@
         android:roundIcon="@mipmap/logo_food_ordering"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        tools:targetApi="31">
-        <activity
-            android:name=".DetailOrderActivity"
-            android:exported="false" />
+        tools:targetApi="35">
+
         <activity
             android:name=".ShowListOrderActivity"
             android:exported="false" />
-        <activity
-            android:name=".ViewListOrderActivity"
-            android:exported="false" />
+        <activity android:name=".MapActivity" />
+
         <activity
             android:name=".ThankActivity"
             android:exported="false" />

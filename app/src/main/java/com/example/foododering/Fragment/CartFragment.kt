@@ -3,7 +3,6 @@ package com.example.foododering.Fragment
 import AdapterCart
 import android.content.Intent
 import android.os.Bundle
-
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
+import java.text.DecimalFormat
 
 class CartFragment : Fragment() {
     private lateinit var binding: FragmentCartBinding
@@ -34,7 +33,8 @@ class CartFragment : Fragment() {
     private lateinit var totalAmount: String
     private lateinit var subTotal: String
     private lateinit var deliveryCharge: String
-    private var subTotalValue: Int = 0
+    private var subTotalValue: Double = 0.0
+    private val decimalFormat = DecimalFormat("#.##")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,11 +48,12 @@ class CartFragment : Fragment() {
         retrieveCartItems()
 
         binding.btnPlaceMyOrder.setOnClickListener {
-            getOrderItemDetail() // Corrected method name
+            getOrderItemDetail()
         }
 
         return binding.root
     }
+
     private fun retrieveCartItems() {
         val foodReference: DatabaseReference =
             database.reference.child("users").child(userId).child("CartItems")
@@ -85,14 +86,17 @@ class CartFragment : Fragment() {
 
                 // Recalculate the total amounts after data changes
                 subTotalValue = calculateTotalAmount(foodPrices, foodQuantities)
-                subTotal = "$subTotalValue$"
+                subTotal = "${decimalFormat.format(subTotalValue)}$"
                 binding.tvSubTotal.text = subTotal
-                deliveryCharge = "1$"
+
+                deliveryCharge = "1.00$"
                 binding.tvCharge.text = deliveryCharge
-                totalAmount = (subTotalValue + 1).toString() + "$"
+
+                val totalAmountValue = subTotalValue + 1.0
+                totalAmount = "${decimalFormat.format(totalAmountValue)}$"
                 binding.tvTotal.text = totalAmount
 
-                // Kiểm tra giỏ hàng có trống không và cập nhật giao diện
+                // Check if cart is empty and update UI
                 if (foodNames.isEmpty()) {
                     binding.tvEmptyCart.visibility = View.VISIBLE
                     binding.imgCartTotal.visibility = View.GONE
@@ -111,7 +115,7 @@ class CartFragment : Fragment() {
     private fun setupAdapter() {
         context?.let { ctx ->
             cartAdapter = AdapterCart(
-                ctx,  // Sử dụng context nếu không null
+                ctx,
                 foodNames,
                 foodImages,
                 foodPrices,
@@ -124,7 +128,6 @@ class CartFragment : Fragment() {
             binding.RecycleViewCart.adapter = cartAdapter
         }
     }
-
 
     private fun getOrderItemDetail() {
         val orderIdReference: DatabaseReference =
@@ -175,29 +178,28 @@ class CartFragment : Fragment() {
     private fun calculateTotalAmount(
         foodPrice: MutableList<String>,
         foodQuantity: MutableList<Int>
-    ): Int {
-        var totalAmount = 0
+    ): Double {
+        var totalAmount = 0.0
         for (i in 0 until foodPrice.size) {
             var price: String = foodPrice[i]
 
-            // Kiểm tra giá trị của price và chuyển thành số nguyên
-            val priceIntValue: Int = try {
+            // Parse price value to Double
+            val priceDoubleValue: Double = try {
                 val lastChar = price.last()
                 if (lastChar == '$') {
-                    price.dropLast(1).toInt()
+                    price.dropLast(1).toDouble()
                 } else {
-                    price.toInt()
+                    price.toDouble()
                 }
             } catch (e: NumberFormatException) {
-                // Nếu không thể chuyển đổi, gán giá trị mặc định
-                0
+                // If conversion fails, assign default value
+                0.0
             }
 
-            // Lấy số lượng và tính tổng
+            // Get quantity and calculate total
             val quantity: Int = foodQuantity[i]
-            totalAmount += priceIntValue * quantity
+            totalAmount += priceDoubleValue * quantity
         }
         return totalAmount
     }
-
 }

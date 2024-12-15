@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffff"
+    android:background="#F8F9FE"
     tools:context=".LoginActivity">
 
     <ImageView
@@ -34,7 +34,7 @@
         android:layout_marginTop="84dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/purplebutton"
-        android:fontFamily="@font/yeon_sung"
+        android:fontFamily="@font/abel"
         android:text="Login"
         android:textAllCaps="false"
         android:textColor="@color/white"

@@ -17,7 +17,9 @@ data class OrderDetails(
     var paymentReceived: Boolean = false,
     var itemPushKey: String? = null,
     var currentTime: Long = 0,
-    var orderNumber: Int = 0
+    var orderNumber: Int = 0,
+    var latitude: Double = 0.0,
+    var longitude: Double = 0.0
 ) : Serializable {
     constructor(parcel: Parcel) : this(
         userUid = parcel.readString(),
@@ -34,7 +36,9 @@ data class OrderDetails(
         paymentReceived = parcel.readByte() != 0.toByte(),
         itemPushKey = parcel.readString(),
         currentTime = parcel.readLong(),
-        orderNumber = parcel.readInt()
+        orderNumber = parcel.readInt(),
+        latitude = parcel.readDouble(),
+        longitude = parcel.readDouble()
     )
 
    fun writeToParcel(parcel: Parcel, flags: Int) {

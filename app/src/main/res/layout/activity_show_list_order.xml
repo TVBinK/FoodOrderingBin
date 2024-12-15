@@ -8,8 +8,21 @@
     android:background="@color/white"
     tools:context=".ShowListOrderActivity">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnViewMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_accept"
+        android:text="View Map"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
     <ImageView
-        android:id="@+id/btn_back"
+        android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -24,8 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="52dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="132dp"
         android:fontFamily="@font/abel"
         android:text="List Order"
         android:textColor="@color/black"
@@ -40,11 +53,11 @@
         android:layout_width="411dp"
         android:layout_height="446dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="1dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView19"
         tools:listitem="@layout/list_order_item" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

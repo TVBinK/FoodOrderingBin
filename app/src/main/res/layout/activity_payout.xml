@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".PayoutActivity">
 
     <androidx.appcompat.widget.AppCompatButton
@@ -63,7 +64,7 @@
         android:layout_width="380dp"
         android:layout_height="65dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/edittextshape"
         android:drawableLeft="@drawable/img_phone"
@@ -74,6 +75,7 @@
         android:inputType="text"
         android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextAddress" />
 
@@ -99,9 +101,9 @@
         android:id="@+id/btn_back2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.021"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/btn_back_purple" />
@@ -113,7 +115,7 @@
         android:layout_marginStart="47dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="92dp"
-        android:fontFamily="@font/yeon_sung"
+        android:fontFamily="@font/abel"
         android:text="Confirm Order"
         android:textColor="@color/black"
         android:textSize="40sp"
