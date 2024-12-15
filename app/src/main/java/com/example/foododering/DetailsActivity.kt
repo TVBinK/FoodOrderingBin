@@ -41,6 +41,7 @@ class DetailsActivity : AppCompatActivity() {
             tvFoodNameDetail.text = foodName
             Glide.with(this@DetailsActivity).load(Uri.parse(foodImage)).into(imageViewfoodImage)
             tvDesciption.text = foodDescription
+            tvPrice.text = foodPrice
         }
         binding.btnAddCart.setOnClickListener {
             addtoupdateCart()

@@ -28,6 +28,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="28dp"
                 android:text="Name"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintStart_toEndOf="@+id/cardView2"
                 app:layout_constraintTop_toTopOf="parent" />

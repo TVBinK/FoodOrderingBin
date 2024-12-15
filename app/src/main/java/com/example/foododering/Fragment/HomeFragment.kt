@@ -1,5 +1,6 @@
 package com.example.foododering.Fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.foododering.Adapter.AdapterHome
+import com.example.foododering.DetailsActivity
 import com.example.foododering.R
 import com.example.foododering.databinding.FragmentHomeBinding
 import com.example.foododering.model.AllMenu
@@ -58,10 +60,11 @@ class HomeFragment : Fragment() {
                     }
                 }
                 setupRecyclerView()
+                binding.progressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                binding.progressBar.visibility = View.GONE
             }
         })
     }
@@ -88,9 +91,25 @@ class HomeFragment : Fragment() {
 
 
     private fun setupRecyclerView() {
-        val adapter = AdapterHome(requireActivity(), menuItems, databaseReference)
-        binding.PopularFoodHome.layoutManager = LinearLayoutManager(requireActivity())
+        val adapter = AdapterHome(requireActivity(), menuItems, databaseReference, object : AdapterHome.OnItemClickListener {
+            override fun onItemClick(item: PopularMenu) {
+                // Chuyển đến DetailsActivity với dữ liệu
+                val intent = Intent(requireActivity(), DetailsActivity::class.java)
+                intent.putExtra("foodName", item.foodName)
+                intent.putExtra("foodImage", item.foodImage)
+                intent.putExtra("foodPrice", item.foodPrice)
+                intent.putExtra("foodDescription", item.foodDescription)
+                startActivity(intent)
+            }
+        })
+
+        binding.PopularFoodHome.layoutManager = LinearLayoutManager(
+            requireActivity(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
         binding.PopularFoodHome.adapter = adapter
     }
+
 
 }

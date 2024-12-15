@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="260dp"
+    android:layout_height="295dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="5dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="15dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="11dp"
+            android:fontFamily="@font/abel"
+            android:text="10"
+            android:textColor="#6B50F6"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/btnPlus"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvStar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/abel"
+            android:text="4.5"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFoodName"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/tvFoodName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="13dp"
+            android:fontFamily="@font/abel"
+            android:text="Name"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgViewPopularItem" />
+
+        <ImageView
+            android:id="@+id/imgViewPopularItem"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/tvEstimatedTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/abel"
+            android:text="15min"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView26"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvStar"
+            app:layout_constraintStart_toEndOf="@+id/tvStar"
+            app:layout_constraintTop_toTopOf="@+id/tvStar"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/star" />
+
+        <TextView
+            android:id="@+id/btnPlus"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/background_plus"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView29"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvEstimatedTime"
+            app:layout_constraintStart_toEndOf="@+id/tvEstimatedTime"
+            app:layout_constraintTop_toTopOf="@+id/tvEstimatedTime"
+            app:srcCompat="@drawable/img_time" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
