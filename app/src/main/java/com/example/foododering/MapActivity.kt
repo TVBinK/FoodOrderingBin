@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,8 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.foododering.databinding.ActivityMapBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import org.json.JSONObject
 import org.osmdroid.config.Configuration
@@ -23,12 +26,19 @@ import org.osmdroid.views.overlay.Polyline
 import kotlin.math.ceil
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
+    private lateinit var databaseReference: DatabaseReference
+    private lateinit var userId: String
+
+    private lateinit var binding: ActivityMapBinding
+
     private lateinit var mapView: MapView
     private lateinit var shipperMarker: Marker
     private lateinit var customerMarker: Marker
     private val database = FirebaseDatabase.getInstance().reference
     private val shipperId = "shipper123"
-    private val customerLocation = GeoPoint(20.9947593, 105.8104609)
+    private var customerLocation = GeoPoint(0.0, 0.0)
+
 
     private lateinit var requestQueue: RequestQueue
 
@@ -39,15 +49,43 @@ class MapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
+        binding = ActivityMapBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        // khởi tạo firebase
+        auth = FirebaseAuth.getInstance()
+        userId = auth.currentUser?.uid.orEmpty()
+        databaseReference = FirebaseDatabase.getInstance().reference
+
+        //khởi tạo customerLocation từ firebase(lấy latitude và longtitude)
+        val userLocationReference = databaseReference.child("users").child(userId).child("Location")
+        // get value vào customerLocation
+        userLocationReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val latitude = snapshot.child("latitude").getValue(Double::class.java)
+                val longitude = snapshot.child("longitude").getValue(Double::class.java)
+                //set vĩ độ, kinh độ từ orderDetails
+                if (latitude != null && longitude != null) {
+                    customerLocation = GeoPoint(latitude, longitude)
+                }
+                Log.d("MapActivity", "Latitude: $latitude, Longitude: $longitude")
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MapActivity, "Lỗi khi tải dữ liệu người dùng: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+
+        })
 
         Configuration.getInstance().userAgentValue = packageName
+        //set sự kiện cho nút btnLocation
+        binding.btnLocation.setOnClickListener{
+            zoomToMyLocation()
+        }
 
-        mapView = findViewById(R.id.mapView)
+        mapView = binding.mapView
         mapView.setMultiTouchControls(true)
 
-        tvDistance = findViewById(R.id.tvDistance)
-        tvEstimatedTime = findViewById(R.id.tvEstimatedTime)
+        tvDistance = binding.tvDistance
+        tvEstimatedTime = binding.tvEstimatedTime
 
         requestQueue = Volley.newRequestQueue(this)
 
@@ -84,7 +122,6 @@ class MapActivity : AppCompatActivity() {
                 if (latitude != null && longitude != null) {
                     val shipperLocation = GeoPoint(latitude, longitude)
                     updateShipperMarker(shipperLocation)
-                    zoomToLocation(shipperLocation)
                     requestRoute(shipperLocation, customerLocation)
                 }
             }
@@ -179,10 +216,13 @@ class MapActivity : AppCompatActivity() {
         currentPolyline = polyline
         mapView.invalidate()
     }
-
-    private fun zoomToLocation(location: GeoPoint) {
-        mapView.controller.setCenter(location)
-        mapView.controller.setZoom(18)
-        mapView.invalidate()
+    private fun zoomToMyLocation() {
+        if (customerLocation.latitude != 0.0 && customerLocation.longitude != 0.0) {
+            mapView.controller.setZoom(18.0) // Đặt mức zoom
+            mapView.controller.animateTo(customerLocation) // Di chuyển đến vị trí hiện tại
+            Toast.makeText(this, "Zoom đến vị trí của bạn", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Không thể xác định vị trí của bạn", Toast.LENGTH_SHORT).show()
+        }
     }
 }

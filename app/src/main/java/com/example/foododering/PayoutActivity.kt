@@ -167,6 +167,10 @@ class PayoutActivity : AppCompatActivity() {
         globalOrderReference.setValue(orderDetails).addOnFailureListener {
             Toast.makeText(this, "Không thể lưu đơn hàng vào nhánh chung", Toast.LENGTH_SHORT).show()
         }
+        // set value cho longitude và latitude lên firebase của user hiện tại
+        val userLocationReference = databaseReference.child("users").child(userId).child("Location")
+        userLocationReference.child("latitude").setValue(latitude)
+        userLocationReference.child("longitude").setValue(longitude)
     }
 
     private fun updateOrderNumber() {
@@ -193,7 +197,7 @@ class PayoutActivity : AppCompatActivity() {
 
     private fun setUserData() {
         val userReference = databaseReference.child("users").child(userId)
-        userReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        userReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     name = snapshot.child("name").getValue(String::class.java).orEmpty()

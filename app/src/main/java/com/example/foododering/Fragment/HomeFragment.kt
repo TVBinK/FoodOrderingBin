@@ -26,37 +26,38 @@ class HomeFragment : Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var menuItems: ArrayList<PopularMenu> = ArrayList()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //Thiết lập binding với layout fragment_home
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Khoi tao Firebase Reference
         databaseReference = FirebaseDatabase.getInstance().reference
-        setupImageSlider()
-        setupViewMoreButton()
-        retrieveMenuItems()
+
+        setupImageSlider() // Cai dat slider hinh anh
+        setupViewMoreButton() // Cai dat nut xem them
+        retrieveMenuItems() // Lay du lieu mon an tu Firebase
     }
 
     private fun retrieveMenuItems() {
-        database = FirebaseDatabase.getInstance()
-        val foodRef: DatabaseReference = database.reference.child("home")
-        //fetch data from database
-        foodRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        database = FirebaseDatabase.getInstance() // Khoi tao Firebase
+        val foodRef: DatabaseReference = database.reference.child("home")// Lấy node home trong database
+        //lấy dữ liệu từ node home
+        foodRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                menuItems.clear()
+                menuItems.clear()// // Xóa hết các mục cũ trong danh sách trước khi cập nhật lại
                 for (foodSnapshot in snapshot.children) {
                     val PopularMenu = foodSnapshot.getValue(PopularMenu::class.java)
                     PopularMenu?.let {
-                        menuItems.add(it)
+                        menuItems.add(it) // Thêm món ăn vào danh sách
                     }
                 }
                 setupRecyclerView()

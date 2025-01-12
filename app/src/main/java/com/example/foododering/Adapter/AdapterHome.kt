@@ -19,6 +19,7 @@ class AdapterHome(
     private val databaseReference: DatabaseReference,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<AdapterHome.MenuViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterHome.MenuViewHolder {
         val binding = PopularItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MenuViewHolder(binding)
@@ -45,7 +46,7 @@ class AdapterHome(
                 tvFoodName.text = menuItem.foodName
                 tvPrice.text = menuItem.foodPrice
                 itemView.setOnClickListener {
-                    listener.onItemClick(menuItem) // Sửa thành menuItem
+                    listener.onItemClick(menuItem)
                 }
             }
         }
