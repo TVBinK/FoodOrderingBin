@@ -36,9 +36,8 @@ class MapActivity : AppCompatActivity() {
     private lateinit var shipperMarker: Marker
     private lateinit var customerMarker: Marker
     private val database = FirebaseDatabase.getInstance().reference
-    private val shipperId = "shipper123"
+    private var shipperId = ""
     private var customerLocation = GeoPoint(0.0, 0.0)
-
 
     private lateinit var requestQueue: RequestQueue
 
@@ -51,33 +50,19 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // khởi tạo firebase
+
         auth = FirebaseAuth.getInstance()
         userId = auth.currentUser?.uid.orEmpty()
         databaseReference = FirebaseDatabase.getInstance().reference
 
-        //khởi tạo customerLocation từ firebase(lấy latitude và longtitude)
-        val userLocationReference = databaseReference.child("users").child(userId).child("Location")
-        // get value vào customerLocation
-        userLocationReference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val latitude = snapshot.child("latitude").getValue(Double::class.java)
-                val longitude = snapshot.child("longitude").getValue(Double::class.java)
-                //set vĩ độ, kinh độ từ orderDetails
-                if (latitude != null && longitude != null) {
-                    customerLocation = GeoPoint(latitude, longitude)
-                }
-                Log.d("MapActivity", "Latitude: $latitude, Longitude: $longitude")
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MapActivity, "Lỗi khi tải dữ liệu người dùng: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-
-        })
+        fetchCustomerLocation { location ->
+            setupCustomerMarker() // Gọi setup marker sau khi có dữ liệu
+        }
+        fetchShipperId()
 
         Configuration.getInstance().userAgentValue = packageName
-        //set sự kiện cho nút btnLocation
-        binding.btnLocation.setOnClickListener{
+
+        binding.btnLocation.setOnClickListener {
             zoomToMyLocation()
         }
 
@@ -91,10 +76,50 @@ class MapActivity : AppCompatActivity() {
 
         shipperMarker = Marker(mapView)
         customerMarker = Marker(mapView)
+    }
 
-        setupCustomerMarker()
+    private fun fetchCustomerLocation(onLocationFetched: (GeoPoint) -> Unit) {
+        val userLocationReference = databaseReference.child("users").child(userId).child("Location")
+        userLocationReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val latitude = snapshot.child("latitude").getValue(Double::class.java)
+                val longitude = snapshot.child("longitude").getValue(Double::class.java)
+                if (latitude != null && longitude != null && latitude != 0.0 && longitude != 0.0) {
+                    customerLocation = GeoPoint(latitude, longitude)
+                    onLocationFetched(customerLocation) // Gọi callback khi có dữ liệu
+                    Log.d("MapActivity", "Customer Location Updated: Latitude = $latitude, Longitude = $longitude")
+                } else {
+                    Log.w("MapActivity", "Invalid location data from Firebase")
+                }
+            }
 
-        fetchShipperLocation()
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MapActivity, "Lỗi khi tải dữ liệu người dùng: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchShipperId() {
+        val orderDetailsRef = database.child("users").child(userId).child("OrderDetails")
+        orderDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (orderSnapshot in snapshot.children) {
+                    val orderId = orderSnapshot.key
+                    val orderAccepted = orderSnapshot.child("orderAccepted").getValue(String::class.java)
+                    Log.d("MapActivity", "Order ID: $orderId, kkkkkkkk: $orderAccepted")
+                    if (orderAccepted == "Accepted") {
+                        shipperId = orderSnapshot.child("shipperID").getValue(String::class.java).orEmpty()
+                        Log.d("MapActivity", "Shipper ID: $shipperId")
+                        fetchShipperLocation() // Gọi hàm sau khi lấy được shipperId
+                        break
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MapActivity, "Lỗi khi tải dữ liệu đơn hàng: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun setupCustomerMarker() {
@@ -111,9 +136,13 @@ class MapActivity : AppCompatActivity() {
 
         mapView.overlays.add(customerMarker)
         mapView.controller.setCenter(customerLocation)
+        mapView.invalidate()
+        Log.d("MapActivity", "Customer marker set at: ${customerLocation.latitude}, ${customerLocation.longitude}")
     }
 
     private fun fetchShipperLocation() {
+        if (shipperId.isEmpty()) return
+
         database.child("shippers").child(shipperId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val latitude = snapshot.child("latitude").getValue(Double::class.java)
@@ -176,7 +205,6 @@ class MapActivity : AppCompatActivity() {
                     val distance = route.getDouble("distance") / 1000 // Convert to kilometers
                     val duration = route.getDouble("duration") / 60 // Convert to minutes
 
-                    // Hiển thị khoảng cách và thời gian dự kiến
                     tvDistance.text = String.format("%.2f km", distance)
                     tvEstimatedTime.text = String.format("~%d phút", ceil(duration).toInt())
 
@@ -216,6 +244,7 @@ class MapActivity : AppCompatActivity() {
         currentPolyline = polyline
         mapView.invalidate()
     }
+
     private fun zoomToMyLocation() {
         if (customerLocation.latitude != 0.0 && customerLocation.longitude != 0.0) {
             mapView.controller.setZoom(18.0) // Đặt mức zoom

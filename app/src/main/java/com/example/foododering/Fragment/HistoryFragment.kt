@@ -4,6 +4,7 @@ import OrderDetails
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,13 +74,14 @@ class HistoryFragment : Fragment() {
 
         val ordersRef = database.reference.child("users").child(userId).child("OrderDetails")
         val shortingQuery = ordersRef.orderByChild("currentTime")
-        shortingQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+        shortingQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listOfOrderItems.clear() // Xóa dữ liệu cũ trước khi thêm mới
                 for (orderSnapshot in snapshot.children) {
                     val buyHistoryItem = orderSnapshot.getValue(OrderDetails::class.java)
                     buyHistoryItem?.let {
                         listOfOrderItems.add(it)
+                        Log.d("alll", "list oddf : ${listOfOrderItems}")
                     }
                 }
                 listOfOrderItems.reverse() // Đảo ngược danh sách để lấy dữ liệu gần nhất
@@ -136,7 +138,7 @@ class HistoryFragment : Fragment() {
         }
 
         val ordersRef = database.reference.child("users").child(userId).child("OrderDetails")
-        ordersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        ordersRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listOfFoodItems.clear() // Đảm bảo danh sách không bị trùng lặp dữ liệu
 

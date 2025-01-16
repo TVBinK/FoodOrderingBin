@@ -2,16 +2,20 @@ package com.example.foododering
 
 import OrderDetails
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.foododering.databinding.ActivityPayoutBinding
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.android.gms.location.*
 
 class PayoutActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -47,7 +51,11 @@ class PayoutActivity : AppCompatActivity() {
 
         // Initialize Location Services
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getCurrentLocation()
+        // tắt nút khi chưa bật vị trí
+        binding.btnPlaceMyOrder.isEnabled = false
+
+        // Kiểm tra quyền và trạng thái GPS
+        checkLocationPermissionAndGPS()
 
         // Initialize user data
         setUserData()
@@ -103,11 +111,68 @@ class PayoutActivity : AppCompatActivity() {
             if (location != null) {
                 latitude = location.latitude
                 longitude = location.longitude
-            } else {
-                Toast.makeText(this, "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show()
+                binding.btnPlaceMyOrder.isEnabled = true // Bật nút khi có vị trí
             }
         }.addOnFailureListener {
             Toast.makeText(this, "Lỗi khi lấy vị trí: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun checkLocationPermissionAndGPS() {
+        if (!isLocationEnabled()) {
+            requestLocationSettings()
+            return
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+
+        // Nếu đã bật vị trí và có quyền, lấy vị trí hiện tại
+        getCurrentLocation()
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun requestLocationSettings() {
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+        val locationSettingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true) // Hiển thị hộp thoại yêu cầu bật GPS
+            .build()
+
+        val settingsClient: SettingsClient = LocationServices.getSettingsClient(this)
+        val task = settingsClient.checkLocationSettings(locationSettingsRequest)
+
+        task.addOnSuccessListener {
+            // GPS đã bật, lấy vị trí
+            getCurrentLocation()
+
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    // Hiển thị hộp thoại yêu cầu bật GPS
+                    exception.startResolutionForResult(this, LOCATION_PERMISSION_REQUEST_CODE)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    Toast.makeText(this, "Không thể bật GPS", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "GPS chưa được bật", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -149,8 +214,8 @@ class PayoutActivity : AppCompatActivity() {
             itemPushKey = itemPushKey,
             currentTime = time,
             orderNumber = orderNumber,
-            latitude = latitude,      // Thêm vĩ độ
-            longitude = longitude     // Thêm kinh độ
+            latitude = latitude,      
+            longitude = longitude
         )
 
         val userOrderReference = databaseReference.child("users").child(userId).child("OrderDetails").child(itemPushKey!!)
@@ -167,10 +232,6 @@ class PayoutActivity : AppCompatActivity() {
         globalOrderReference.setValue(orderDetails).addOnFailureListener {
             Toast.makeText(this, "Không thể lưu đơn hàng vào nhánh chung", Toast.LENGTH_SHORT).show()
         }
-        // set value cho longitude và latitude lên firebase của user hiện tại
-        val userLocationReference = databaseReference.child("users").child(userId).child("Location")
-        userLocationReference.child("latitude").setValue(latitude)
-        userLocationReference.child("longitude").setValue(longitude)
     }
 
     private fun updateOrderNumber() {
@@ -216,6 +277,32 @@ class PayoutActivity : AppCompatActivity() {
                 Toast.makeText(this@PayoutActivity, "Lỗi khi tải dữ liệu người dùng: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                checkLocationPermissionAndGPS()
+            } else {
+                Toast.makeText(this, "Quyền truy cập vị trí bị từ chối", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                getCurrentLocation()
+            } else {
+                Toast.makeText(this, "Bạn cần bật GPS để đặt hàng", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object {

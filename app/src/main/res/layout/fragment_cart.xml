@@ -51,6 +51,7 @@
             android:layout_marginBottom="72dp"
             android:background="@drawable/purplebutton"
             android:src="@drawable/background_total"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.512"
@@ -158,20 +159,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvEmptyCart"
+        <ImageView
+            android:id="@+id/imgEmptyCart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="140dp"
-            android:text="Cart is Empty!!"
-            android:textColor="#E21616"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            android:fontFamily="@font/abel"
+            android:src="@drawable/empty_cart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView12" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

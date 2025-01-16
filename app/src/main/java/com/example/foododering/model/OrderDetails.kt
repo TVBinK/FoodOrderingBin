@@ -13,13 +13,16 @@ data class OrderDetails(
     var address: String? = null,
     var totalPrice: String? = null,
     var phoneNumber: String? = null,
-    var orderAccepted: String? = "Watting",
+    var orderAccepted: String? = "Waitting",
     var paymentReceived: Boolean = false,
     var itemPushKey: String? = null,
     var currentTime: Long = 0,
     var orderNumber: Int = 0,
     var latitude: Double = 0.0,
-    var longitude: Double = 0.0
+    var longitude: Double = 0.0,
+    var shipperName: String? = null,
+    var shipperPhone: String? = null,
+    var shipperId: String? = null
 ) : Serializable {
     constructor(parcel: Parcel) : this(
         userUid = parcel.readString(),
@@ -37,29 +40,14 @@ data class OrderDetails(
         itemPushKey = parcel.readString(),
         currentTime = parcel.readLong(),
         orderNumber = parcel.readInt(),
-        latitude = parcel.readDouble(),
-        longitude = parcel.readDouble()
+        shipperName = parcel.readString(),
+        shipperPhone = parcel.readString(),
+        shipperId = parcel.readString()
     )
 
-   fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(userUid)
-        parcel.writeString(userName)
-        parcel.writeStringList(foodNames)
-        parcel.writeStringList(foodImages)
-        parcel.writeStringList(foodPrices)
-        parcel.writeIntArray(foodQuantities?.toIntArray())
-        parcel.writeStringList(foodDescription)
-        parcel.writeString(address)
-        parcel.writeString(totalPrice)
-        parcel.writeString(phoneNumber)
-        parcel.writeString(orderAccepted)
-        parcel.writeByte(if (paymentReceived) 1 else 0)
-        parcel.writeString(itemPushKey)
-        parcel.writeLong(currentTime)
-        parcel.writeInt(orderNumber)
-    }
 
- fun describeContents(): Int = 0
+
+    fun describeContents(): Int = 0
 
     companion object CREATOR : Parcelable.Creator<OrderDetails> {
         override fun createFromParcel(parcel: Parcel): OrderDetails = OrderDetails(parcel)

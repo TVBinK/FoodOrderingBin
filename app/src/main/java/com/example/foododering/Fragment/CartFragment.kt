@@ -98,10 +98,10 @@ class CartFragment : Fragment() {
 
                 // Check if cart is empty and update UI
                 if (foodNames.isEmpty()) {
-                    binding.tvEmptyCart.visibility = View.VISIBLE
+                    binding.imgEmptyCart.visibility = View.VISIBLE
                     binding.imgCartTotal.visibility = View.GONE
                 } else {
-                    binding.tvEmptyCart.visibility = View.GONE
+                    binding.imgEmptyCart.visibility = View.GONE
                     binding.imgCartTotal.visibility = View.VISIBLE
                 }
             }

@@ -13,7 +13,7 @@ import com.example.foododering.model.AllMenu
 import com.google.firebase.database.DatabaseReference
 
 class AdapterMenu(
-    private val menuList : ArrayList<AllMenu>,
+    private var menuList : ArrayList<AllMenu>,
     private val databaseReference: DatabaseReference,
     private val requireContext: Context
 ) : RecyclerView.Adapter<AdapterMenu.MenuViewHolder>() {
@@ -64,4 +64,9 @@ class AdapterMenu(
             }
         requireContext.startActivity(intent)
     }
+    fun updateData(newMenuItems: ArrayList<AllMenu>) {
+        menuList = newMenuItems
+        notifyDataSetChanged()
+    }
+
 }

@@ -27,14 +27,15 @@ class ShowListOrderActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             finish()
         }
+        // Nhận danh sách đơn hàng từ Intent
+        val showListOrders = intent.getSerializableExtra("listOrder") as? ArrayList<OrderDetails>
         //btn view map
         binding.btnViewMap.setOnClickListener {
             //itent to map activity
-            startActivity(Intent(this, MapActivity::class.java))
+            val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent)
         }
 
-        // Nhận danh sách đơn hàng từ Intent
-        val showListOrders = intent.getSerializableExtra("listOrder") as? ArrayList<OrderDetails>
         showListOrders?.let { orderDetails ->
             if (orderDetails.isNotEmpty()) {
                 val showListOrder = orderDetails[0]

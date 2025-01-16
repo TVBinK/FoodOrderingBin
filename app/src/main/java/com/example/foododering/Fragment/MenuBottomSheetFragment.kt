@@ -1,3 +1,4 @@
+
 package com.example.foododering.Fragment
 
 import android.os.Bundle
@@ -6,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.foododering.Adapter.AdapterHome
 import com.example.foododering.Adapter.AdapterMenu
 import com.example.foododering.databinding.FragmentMenuBottomSheetBinding
 import com.example.foododering.model.AllMenu
@@ -20,7 +20,7 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize database reference here to avoid multiple initializations
+        // Initialize database reference
         databaseReference = FirebaseDatabase.getInstance().reference.child("menu")
     }
 
@@ -29,13 +29,28 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMenuBottomSheetBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Retrieve menu items
         retrieveMenuItems()
+
+        // Set up SearchView
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterMenuItems(newText)
+                return true
+            }
+        })
+
+        // Handle back button
         binding.btnBack.setOnClickListener {
             dismiss()
         }
@@ -65,8 +80,29 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
     private fun setupRecyclerView() {
         if (menuItems.isNotEmpty()) {
             val adapter = AdapterMenu(menuItems, databaseReference, requireActivity())
-            binding.menuRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+            binding.menuRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             binding.menuRecyclerView.adapter = adapter
+        } else {
+            showToast("No menu items available")
+        }
+    }
+
+    private fun filterMenuItems(query: String?) {
+        val filteredList = if (!query.isNullOrEmpty()) {
+            menuItems.filter { it.foodName?.contains(query, ignoreCase = true) == true }
+        } else {
+            menuItems
+        }
+
+        updateRecyclerView(ArrayList(filteredList))
+    }
+
+    private fun updateRecyclerView(filteredList: ArrayList<AllMenu>) {
+        val adapter = binding.menuRecyclerView.adapter as? AdapterMenu
+        if (adapter != null) {
+            adapter.updateData(filteredList)
+        } else {
+            setupRecyclerView()
         }
     }
 
